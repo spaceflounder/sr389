@@ -21,6 +21,7 @@
 #include "allegro5/allegro.h"
 #include "allegro5/allegro_primitives.h"
 
+#include "draw.h"
 #include "hitbox.h"
 #include "medlib.h"
 #include "video.h"
@@ -320,7 +321,7 @@ void drawSprite(struct SPRITE *s, float x, float y)
         float h = al_get_bitmap_height(bmpLib[s->__internal__anim.graphicIndex].data) * s->GetScaleY(s);
         al_draw_tinted_scaled_rotated_bitmap(bmpLib[s->__internal__anim.graphicIndex].data,
            s->__internal_tint, 0, 0, x - (w / 2) - floorf(camera.x), y - h - floorf(camera.y),
-                s->GetScaleX(s), s->GetScaleY(s), s->GetAngle(s), 0);
+                s->GetScaleX(s), s->GetScaleY(s), s->GetAngle(s), s->flipped);
 
     }
     else {
@@ -366,7 +367,7 @@ void drawSprite(struct SPRITE *s, float x, float y)
            s->__internal_tint,
            0, 0, (x - (f.w / 2)) - floorf(camera.x),
                 (y - f.h) - floorf(camera.y), s->GetScaleX(s), s->GetScaleY(s),
-           s->GetAngle(s), 0);
+           s->GetAngle(s), s->flipped);
         //al_draw_rectangle(s->box.x - floorf(camera.x), s->box.y - floorf(camera.y), s->box.right - floorf(camera.x), s->box.bottom - floorf(camera.y), al_map_rgb(0, 255, 0), 1);
 
     }
@@ -406,6 +407,9 @@ void createSprite(struct SPRITE *s)
 {
 
     /* set up new sprite - note that init is called AFTER sprite is actually put into memory */
+
+    int i;
+    int c;
 
     // first set up interface
     s->GetX = GetX;
@@ -448,7 +452,7 @@ void createSprite(struct SPRITE *s)
     s->collides = Collides;
     s->SetTint = SetTint;
     s->GetVisible = GetVisible;
-    s->SetVisible = SetVisible;
+    s->SetVisible =SetVisible;
 
     // rarely used scale and rotate
     s->__internal__scaleX = 1;
@@ -473,11 +477,18 @@ void createSprite(struct SPRITE *s)
     s->__internal__visible = true;
     s->__internal__looping = false;
     s->__internal_slowAnim = 1;
+    s->flipped = 0;
 
     // collision d
     s->groundTile = false;
     s->solid = false;
     s->collidable = false;
+    for (i = 0; i < MAX_DIRECTIONS; ++i) {
+        s->isTouching[i] = 0;
+    }
+    for (c = 0; c < MAX_CELLS; ++c) {
+        s->cell[c] = 255;
+    }
 
     // timer system
     s->GetTimeRemaining = GetTimeRemaining;

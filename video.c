@@ -74,7 +74,8 @@ int videoInit(void) {
     ALLEGRO_DISPLAY_MODE	disp_data;
     //al_get_display_mode(al_get_num_display_modes() - 1, &disp_data);
     al_get_display_mode(0, &disp_data);
-    al_set_new_display_flags(ALLEGRO_FULLSCREEN_WINDOW + ALLEGRO_OPENGL);
+    al_set_new_display_option(ALLEGRO_VSYNC, 1, ALLEGRO_SUGGEST);
+    al_set_new_display_flags(ALLEGRO_FULLSCREEN_WINDOW + ALLEGRO_OPENGL_3_0);
     //al_set_new_display_flags(ALLEGRO_WINDOWED);
     //al_set_new_display_flags(ALLEGRO_FULLSCREEN + ALLEGRO_OPENGL_3_0);
     display = al_create_display( disp_data.width , disp_data.height );

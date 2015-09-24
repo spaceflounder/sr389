@@ -24,6 +24,7 @@
 #include "allegro5/allegro.h"
 #include "allegro5/allegro_primitives.h"
 
+#include "draw.h"
 #include "hitbox.h"
 #include "sprite.h"
 #include "camera.h"
@@ -256,7 +257,7 @@ static void spriteTileHashCheck(struct SPRITE *s)
     unsigned int i;
     unsigned int c;
     for (hardness = 0; hardness < MAX_HASHMAPS; ++hardness) {
-        if (s->collidable) {
+        //if (s->collidable) {
             for (i = 0; i < MAX_CELLS; ++i) {
                 if (s->cell[i] != BLANK_CELL) {
                     if (hashmap[hardness][s->cell[i]].tileNum) {
@@ -287,8 +288,9 @@ static void spriteTileHashCheck(struct SPRITE *s)
 
                 }
             }
-        }
+        //}
     }
+
 }
 
 
@@ -400,37 +402,28 @@ void drawStage(void)
 
     // the order is important, because we need back to front
     // defer drawing for better gpu use
-    struct SPRITE *spriteArray[MAX_SPRITES];
-    unsigned int i = 0;
-    unsigned int k = 0;
+    setSpriteOrder();
     handleShakeyCam();
+    finalizeDrawLayer(0);
     al_hold_bitmap_drawing(true);
     DRAWBACK
-
-    // copy sprites to array, only if alive and on camera - and display the back sprites
-    for (i = 0; i < MAX_SPRITES; ++i) {
-        if (sprites[i].GetAlive(&sprites[i])) {
-            if (checkCollide(camera, sprites[i].box)) {
-                if (sprites[i].__internal__z) {
-                    spriteArray[k] = &sprites[i];
-                    ++k;
-                } else {
-                    if (sprites[i].draw)
-                        sprites[i].draw(&sprites[i]);
-                }
-            }
-        }
-    }
+    al_hold_bitmap_drawing(false);
 
     // tiles
+    finalizeDrawLayer(1);
+    finalizeDrawLayer(2);
+    finalizeDrawLayer(3);
+    al_hold_bitmap_drawing(true);
     DRAWTILES
-
-    // now display z-ordered sprites
-    for (i = 0; i < k; ++i)
-        spriteArray[i]->draw(spriteArray[i]);
-    DRAWFORE
-    drawStateFront();
     al_hold_bitmap_drawing(false);
+    finalizeDrawLayer(4);
+    finalizeDrawLayer(5);
+    finalizeDrawLayer(6);
+
+    // foreground
+    DRAWFORE
+    al_hold_bitmap_drawing(false);
+    finalizeDrawLayer(7);
 
 }
 

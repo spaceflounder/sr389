@@ -70,6 +70,7 @@ int main(int argc __attribute__((unused)), char *argv[])
     STARTUP(videoInit())
     STARTUP(init_datafile(argv))
     STARTUP(al_install_keyboard())
+    STARTUP(al_install_joystick())
     STARTUP(fontInit())
     STARTUP(setupSound())
     timer = al_create_timer(1.0 / 60);

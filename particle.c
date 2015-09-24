@@ -173,6 +173,7 @@ struct SPRITE *getNewParticle(float x, float y, float vx, float vy, float rate, 
         struct PARTICLE *data = (struct PARTICLE *)s->data;
         data = s->data = (struct PARTICLE *)malloc(sizeof(struct PARTICLE));
         s->__internal__anim.graphicIndex = searchForBmp(name);
+        s->__internal__z = 5;
         newHitbox(&s->box, x, y, 5, 5);
         s->SetVX(s, vx);
         s->SetVY(s, vy);

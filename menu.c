@@ -73,17 +73,17 @@ void menuControl(struct GAMEMENU *menu, struct CONTROLLER *controller)
 {
 
     // default menu control system
-    if (isKeyReleased(UP, controller)) {
+    if (isKeyReleased(UP, controller) || isKeyReleased(KEYBOARD_UP, controller)) {
         if (menu->selectedCommandIndex > 0) {
             --menu->selectedCommandIndex;
         }
     }
-    if (isKeyReleased(DOWN, controller)) {
+    if (isKeyReleased(DOWN, controller) || isKeyReleased(KEYBOARD_DOWN, controller)) {
         if (menu->selectedCommandIndex < (menu->numberOfCommands - 1)) {
             ++menu->selectedCommandIndex;
         }
     }
-    if (isKeyReleased(BUTTON_A, controller)) {
+    if (isKeyReleased(BUTTON_A, controller) || isKeyReleased(KEYBOARD_ENTER, controller)) {
         if (menu->command[menu->selectedCommandIndex].activate) {
             closeMenu(menu);
             menu->command[menu->selectedCommandIndex].activate();
@@ -143,7 +143,7 @@ void drawMenu(struct GAMEMENU *menu)
 
     /* draw in-game menu */
     int i = 0;
-    al_draw_filled_rectangle(menu->x, menu->y, menu->x + menu->width, menu->y + ((menu->numberOfCommands + 2) * menu->itemHeight) + (borderSize * 2), menu->bgColor);
+    al_draw_filled_rectangle(menu->x, menu->y, menu->x + menu->width, menu->y + ((menu->numberOfCommands + 2) * menu->itemHeight) + (borderSize * 3), menu->bgColor);
     printCenter(menu->font, menu->x + (menu->width / 2), menu->y + borderSize, menu->title);
     for (i = 0; i < menu->numberOfCommands; ++i) {
         menu->command[i].draw(menu, &menu->command[i]);

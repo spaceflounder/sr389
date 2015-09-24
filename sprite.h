@@ -147,8 +147,9 @@ struct SPRITE
     /* sprite id, for collions */
     unsigned int id;
 
-    /* sprite direction */
+    /* sprite direction and graphical flip */
     unsigned int direction;
+    unsigned int flipped;
 
     /* collision walls */
     unsigned int isTouching[MAX_DIRECTIONS];

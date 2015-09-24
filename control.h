@@ -10,18 +10,22 @@
  * contains both keyboard and joystick data
  */
 
-#define JOYSTICK_MAX                    12
-#define CONTROLLER_INPUT_MAX            12
+#define JOYSTICK_MAX                    128
+#define CONTROLLER_INPUT_MAX            22
 
-#define BUTTON_A                4
-#define BUTTON_B                5
-#define BUTTON_C                6
-#define BUTTON_D                7
-#define BUTTON_E                8
-#define BUTTON_PAUSE            9
-#define SHOULDER_LEFT           10
-#define SHOULDER_RIGHT          11
-
+#define BUTTON_A                9
+#define BUTTON_B                10
+#define BUTTON_C                11
+#define BUTTON_D                12
+#define BUTTON_E                13
+#define BUTTON_PAUSE            14
+#define SHOULDER_LEFT           15
+#define SHOULDER_RIGHT          16
+#define KEYBOARD_ENTER          17
+#define KEYBOARD_LEFT           18
+#define KEYBOARD_RIGHT          19
+#define KEYBOARD_UP             20
+#define KEYBOARD_DOWN           21
 
 /* SR389 directions/sides */
 #define LEFT            0
@@ -62,12 +66,14 @@ struct CONTROLLER
 };
 
 
+unsigned int serializeControllerMapToFile(void);
+unsigned int deserializeControllerMapFromFile(struct HWCONTROLINPUT *hwcontrol, struct CONTROLLER *controller);
 void resetControlSystem(struct CONTROLLER *controller, struct HWCONTROLINPUT *hwcontrol);
+int *setControlMapping(struct HWCONTROLINPUT *hwcontrol, const unsigned int controllerInput);
 void flushController(struct HWCONTROLINPUT *hwControl);
 void clearKeyBuf(struct CONTROLLER *controller);
 void maintainKeyBuf(struct CONTROLLER *controller);
 void initKeyBuffer(struct CONTROLLER *controller);
-void setControllerDefaults(struct HWCONTROLINPUT *hwControl, struct CONTROLLER *controller);
 void handleReleasedKeys(struct CONTROLLER *controller);
 unsigned int isKeyReleased(int x, struct CONTROLLER *controller);
 

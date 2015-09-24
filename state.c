@@ -15,8 +15,10 @@
 
 #include "allegro5/allegro.h"
 #include "allegro5/allegro_primitives.h"
+#include "draw.h"
 #include "hitbox.h"
 #include "control.h"
+#include "keymap.h"
 #include "sprite.h"
 #include "state.h"
 #include "video.h"
@@ -179,68 +181,45 @@ void drawLight(void)
 }
 
 
+void setSpriteOrder(void)
+{
+
+    /* set sprite order */
+    unsigned int i;
+    for (i = 0; i < MAX_SPRITES; ++i) {
+
+        /* add sprite draw instruction to master list */
+        if (sprites[i].__internal__alive)
+            addSpriteToLayer(sprites[i].__internal__z, &sprites[i]);
+    }
+    for (i = 0; i < MAX_FX; ++i) {
+
+        /* add fx (usually particles) to draw instruction to master list */
+        if (fx[i].__internal__alive)
+            addSpriteToLayer(fx[i].__internal__z, &fx[i]);
+    }
+
+}
+
+
 void drawState(void)
 {
 
+
     /* draw all sprites in layer - used for states without tiles (the default) */
-    drawStateBack();
-    drawStateFront();
+    setSpriteOrder();
+    finalizeDrawLayer(0);
+    finalizeDrawLayer(1);
+    finalizeDrawLayer(2);
+    finalizeDrawLayer(3);
+    finalizeDrawLayer(4);
+    finalizeDrawLayer(5);
+    finalizeDrawLayer(6);
+    finalizeDrawLayer(7);
     drawLight();
 
 }
 
-
-void drawStateFront(void)
-{
-
-    /* draw sprites in front layer, usually for special effects - this layer is unsorted */
-    al_hold_bitmap_drawing(true);
-    int i;
-    for (i = 0; i < MAX_FX; ++i) {
-        if (fx[i].GetAlive(&fx[i])) {
-            if (checkCollide(camera, fx[i].box)) {
-                if (fx[i].draw) {
-                    fx[i].draw(&fx[i]);
-                }
-            }
-        }
-    }
-    al_hold_bitmap_drawing(false);
-
-}
-
-
-void drawStateBack(void)
-{
-
-    /* draw all sprites back layer - usually monsters, player, yada
-     * this layer is sorted
-     */
-    struct SPRITE *spriteArray[MAX_SPRITES];
-    unsigned int i = 0, k = 0;
-
-    // copy sprites to array, only if alive and on camera - and display the back sprites
-    al_hold_bitmap_drawing(true);
-    for (i = 0; i < MAX_SPRITES; ++i) {
-        if (sprites[i].GetAlive(&sprites[i])) {
-            if (checkCollide(camera, sprites[i].box)) {
-                if (sprites[i].__internal__z) {
-                    spriteArray[k] = &sprites[i];
-                    ++k;
-                } else {
-                    if (sprites[i].draw)
-                        sprites[i].draw(&sprites[i]);
-                }
-            }
-        }
-    }
-
-    // now display z-ordered sprites
-    for (i = 0; i < k; ++i)
-        spriteArray[i]->draw(spriteArray[i]);
-    al_hold_bitmap_drawing(false);
-
-}
 
 
 void nextState(void *(gotoFunc))
@@ -297,11 +276,14 @@ void runState(ALLEGRO_TIMER *timer)
     struct HWCONTROLINPUT hwControl;
     struct CONTROLLER controller;
     unsigned int redraw = false;
+    setHardwareControl(&hwControl);
     resetControlSystem(&controller, &hwControl);
-    setControllerDefaults(&hwControl, &controller);
+    deserializeControllerMapFromFile(&hwControl, &controller);
     events = al_create_event_queue();
+    resetAllDrawLayers();
     al_register_event_source(events, al_get_timer_event_source(timer));
     al_register_event_source(events, al_get_keyboard_event_source());
+    al_register_event_source(events, al_get_joystick_event_source());
 
     /* begin loop */
     do {
@@ -314,6 +296,12 @@ void runState(ALLEGRO_TIMER *timer)
             break;
         case ALLEGRO_EVENT_KEY_UP:
             hwControl.pressedKeys[event.keyboard.keycode] = false;
+            break;
+        case ALLEGRO_EVENT_JOYSTICK_BUTTON_DOWN:
+            hwControl.pressedJS[event.joystick.button] = true;
+            break;
+        case ALLEGRO_EVENT_JOYSTICK_BUTTON_UP:
+            hwControl.pressedJS[event.joystick.button] = false;
             break;
         case ALLEGRO_EVENT_TIMER:
 
@@ -364,14 +352,6 @@ void runState(ALLEGRO_TIMER *timer)
             flushController(&hwControl);
             clearKeyBuf(&controller);
             al_flush_event_queue(events);
-
-            // wait for A button to release
-            while (*controller.pressedInputs[BUTTON_A] == true) {
-                al_wait_for_event(events, &event);
-                if (event.type == ALLEGRO_KEY_UP) {
-                    hwControl.pressedKeys[event.keyboard.keycode] = false;
-                }
-            }
 
         }
 

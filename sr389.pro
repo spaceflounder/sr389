@@ -3,7 +3,7 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
-LIBS += -lphysfs `pkg-config --libs --static allegro-5 allegro_audio-5 allegro_font-5 allegro_ttf-5 allegro_image-5 allegro_acodec-5 allegro_primitives-5 allegro_physfs-5`
+LIBS += -lphysfs `pkg-config --libs --static allegro-5.0 allegro_acodec-5.0 allegro_audio-5.0 allegro_color-5.0 allegro_font-5.0 allegro_image-5.0 allegro_main-5.0 allegro_memfile-5.0 allegro_physfs-5.0 allegro_primitives-5.0 allegro_ttf-5.0`
 
 SOURCES += \
     game/game.c \
@@ -62,7 +62,19 @@ SOURCES += \
     video.c \
     game/elevator.c \
     game/monsters/poisonmushroom.c \
-    game/stages/josiah.c
+    game/stages/josiah.c \
+    draw.c \
+    game/stages/seacastle.c \
+    game/stages/jeff3.c \
+    game/stages/underground1.c \
+    game/stages/seacave1.c \
+    game/monsters/cheepcheep.c \
+    game/monsters/bertha.c \
+    game/stages/seaside2.c \
+    game/stages/seaside3.c \
+    keymap.c \
+    game/princess.c \
+    game/stages/title.c
 
 include(deployment.pri)
 qtcAddDeployment()
@@ -116,7 +128,6 @@ HEADERS += \
     game/stages/traveltoad.h \
     game/monsters/thwomp.h \
     game/monsters/birdo.h \
-    game/stages/stagea01.h \
     pswitch.h \
     game/monsters/luigi.h \
     game/stages/stageA03.h \
@@ -124,5 +135,26 @@ HEADERS += \
     game/monsters/blooper.h \
     game/stages/seaSide1.h \
     game/monsters/fryguy.h \
-    game/qb.h
+    game/qb.h \
+    draw.h \
+    game/stages/seaCastle.h \
+    game/stages/stageA01.h \
+    game/stages/ice1.h \
+    game/stages/jeff1.h \
+    game/stages/jeff2.h \
+    game/stages/jeff3.h \
+    game/stages/stageA02.h \
+    game/stages/stageC01.h \
+    game/stages/stageC02.h \
+    game/stages/stageP01.h \
+    game/stages/stageU01.h \
+    game/stages/stageU02.h \
+    game/stages/stageU03.h \
+    game/stages/seaCave1.h \
+    game/stages/undeground1.h \
+    game/monsters/cheepCheep.h \
+    game/monsters/bertha.h \
+    game/stages/seaSide2.h \
+    keymap.h \
+    game/princessLuigi.h
 
