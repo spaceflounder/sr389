@@ -1,0 +1,5 @@
+#ifndef SPRITESHEET_H
+#define SPRITESHEET_H
+
+#endif // SPRITESHEET_H
+
